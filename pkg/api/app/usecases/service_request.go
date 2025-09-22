@@ -27,6 +27,15 @@ func NewServiceRequestImpl(repo repositories.ServiceRepository, logger *log.Logg
 func (s *ServiceRequestImpl) Handle(ctx context.Context, params ...interface{}) (interface{}, error) {
 	s.log.Println("Creating service...")
 	req := params[0].(repositories.CreateServiceRequestDTO)
+	isValid, err := s.repo.ValidateExistingPendingServiceFromClientToProfessional(ctx, req.ClientID, req.ProfessionalID)
+	if err != nil {
+		s.log.Printf("Error validating existing pending service: %v", err)
+		return repositories.CreateServiceResponseDto{}, r.InternalServerError(err.Error())
+	}
+	if isValid {
+		s.log.Println("Existing pending service found.")
+		return repositories.CreateServiceResponseDto{}, r.BadRequest("Existing pending service found.")
+	}
 	response, err := s.repo.CreateService(ctx, req)
 	if err != nil {
 		s.log.Printf("Error creating service: %v", err)

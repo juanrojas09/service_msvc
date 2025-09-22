@@ -25,4 +25,6 @@ type CreateServiceResponseDto struct {
 type ServiceRepository interface {
 	// Define the methods that the service repository should have
 	CreateService(ctx context.Context, dto CreateServiceRequestDTO) (CreateServiceResponseDto, error)
+
+	ValidateExistingPendingServiceFromClientToProfessional(ctx context.Context, clientID string, professionalID string) (bool, error)
 }

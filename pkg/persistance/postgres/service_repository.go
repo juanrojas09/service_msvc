@@ -71,3 +71,23 @@ func (s *ServiceRepositoryImp) CreateService(ctx context.Context, dto repositori
 	return resp, nil
 
 }
+
+func (s *ServiceRepositoryImp) ValidateExistingPendingServiceFromClientToProfessional(ctx context.Context, clientID string, professionalID string) (bool, error) {
+	s.log.Println("Validating existing pending service from client to professional...")
+	var count int64
+	var statusRes domain.Status
+	res := s.db.WithContext(ctx).Model(&domain.Status{}).Where("name = ?", "FINALIZADO").First(&statusRes)
+	if res.Error == gorm.ErrRecordNotFound {
+		return false, gorm.ErrRecordNotFound
+	}
+	res = s.db.WithContext(ctx).Model(&domain.ServicesRequests{}).Where("client_id = ? AND professional_id = ? AND status_id != ?", clientID, professionalID, statusRes.ID).Count(&count)
+
+	if res.Error != nil {
+		s.log.Printf("Error validating existing pending service from client to professional: %v", res.Error)
+		return false, res.Error
+	}
+	if count > 0 {
+		return true, nil
+	}
+	return false, nil
+}
