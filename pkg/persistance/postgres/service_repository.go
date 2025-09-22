@@ -91,3 +91,13 @@ func (s *ServiceRepositoryImp) ValidateExistingPendingServiceFromClientToProfess
 	}
 	return false, nil
 }
+
+func (s *ServiceRepositoryImp) GetClientById(ctx context.Context, clientID string) (*domain.Users, error) {
+	var user domain.Users
+	res := s.db.WithContext(ctx).Model(&domain.Users{}).Where("id = ?", clientID).First(&user)
+	if res.Error != nil {
+		s.log.Printf("Error getting client by ID: %v", res.Error)
+		return nil, res.Error
+	}
+	return &user, nil
+}

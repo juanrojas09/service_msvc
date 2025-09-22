@@ -1,6 +1,10 @@
 package repositories
 
-import "context"
+import (
+	"context"
+
+	"github.com/juanrojas09/core_domain/domain"
+)
 
 type CreateServiceRequestDTO struct {
 	ProfessionalID  string `json:"professional_id" `
@@ -25,6 +29,7 @@ type CreateServiceResponseDto struct {
 type ServiceRepository interface {
 	// Define the methods that the service repository should have
 	CreateService(ctx context.Context, dto CreateServiceRequestDTO) (CreateServiceResponseDto, error)
+	GetClientById(ctx context.Context, clientID string) (*domain.Users, error)
 
 	ValidateExistingPendingServiceFromClientToProfessional(ctx context.Context, clientID string, professionalID string) (bool, error)
 }
