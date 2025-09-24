@@ -47,19 +47,25 @@ func (s *ServiceRepositoryImp) CreateService(ctx context.Context, dto repositori
 	if err != nil {
 		return repositories.CreateServiceResponseDto{}, err
 	}
-
-	tx := s.db.WithContext(ctx).Model(&domain.ServicesRequests{}).Create(
-		&domain.ServicesRequests{
-			ID:             uuid.New().String(),
-			ProfessionalID: dto.ProfessionalID,
-			ClientID:       dto.ClientID,
-			Description:    dto.Description,
-			Category:       categoryRes,
-			LastClientLat:  &clientLat,
-			LastClientLng:  &clientLng,
-			Status:         statusRes,
-		},
-	).Select("id, client_id, professional_id, description, last_client_lat as client_latitude, last_client_lng as client_longitude").Scan(&resp)
+	var data = &domain.ServicesRequests{
+		ID:             uuid.New().String(),
+		ProfessionalID: dto.ProfessionalID,
+		ClientID:       dto.ClientID,
+		Description:    dto.Description,
+		Category:       categoryRes,
+		LastClientLat:  &clientLat,
+		LastClientLng:  &clientLng,
+		Status:         statusRes,
+	}
+	tx := s.db.WithContext(ctx).Model(&domain.ServicesRequests{})
+	if dto.ProfessionalID == "" {
+		tx = tx.Raw("INSERT INTO services_requests (id, client_id, description, category_id, last_client_lat, last_client_lng, status_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())", data.ID, data.ClientID, data.Description, data.Category.ID, data.LastClientLat, data.LastClientLng, statusRes.ID)
+		tx = tx.Select("id, client_id, professional_id, description, last_client_lat as client_latitude, last_client_lng as client_longitude").Scan(&resp)
+	} else {
+		tx = tx.Create(
+			&data,
+		).Select("id, client_id, professional_id, description, last_client_lat as client_latitude, last_client_lng as client_longitude").Scan(&resp)
+	}
 
 	if tx.Error != nil {
 		s.log.Printf("Error inserting service into the database: %v", tx.Error)
@@ -100,4 +106,36 @@ func (s *ServiceRepositoryImp) GetClientById(ctx context.Context, clientID strin
 		return nil, res.Error
 	}
 	return &user, nil
+}
+
+func (s *ServiceRepositoryImp) CountServicesByUserId(ctx context.Context, userID string) (int, error) {
+	var count int64
+	res := s.db.WithContext(ctx).Model(&domain.ServicesRequests{}).Where("professional_id = ? OR client_id = ?", userID, userID).Count(&count)
+	if res.Error != nil {
+		s.log.Printf("Error counting services by user ID: %v", res.Error)
+		return 0, res.Error
+	}
+	return int(count), nil
+}
+func (s *ServiceRepositoryImp) GetServicesByUserId(ctx context.Context, userID string, offset int, limit int) ([]repositories.ServiceDataResponseDto, error) {
+	var results []repositories.ServiceDataResponseDto
+	var services []domain.ServicesRequests
+	res := s.db.WithContext(ctx).Model(&domain.ServicesRequests{}).
+		Preload("Professional").Preload("Client").Preload("Status").Preload("Category").
+		Where("professional_id = ? OR client_id = ? AND professional_id is not null", userID, userID).
+		Offset(offset).Limit(limit).Find(&services)
+	if res.Error != nil {
+		s.log.Printf("Error getting services by user ID: %v", res.Error)
+		return nil, res.Error
+	}
+	for _, service := range services {
+		mappedResult := repositories.ServiceDataResponseDto{
+			Status:           string(service.Status.Name),
+			Description:      service.Description,
+			ProfessionalName: service.Professional.Name + " " + service.Professional.LastName,
+			CategoryName:     service.Category.Name,
+		}
+		results = append(results, mappedResult)
+	}
+	return results, nil
 }

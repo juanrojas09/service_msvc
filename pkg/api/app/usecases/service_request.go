@@ -36,8 +36,8 @@ func (s *ServiceRequestImpl) Handle(ctx context.Context, params ...interface{}) 
 		return repositories.CreateServiceResponseDto{}, r.InternalServerError(err.Error())
 	}
 	if isValid {
-		s.log.Println("Existing pending service found.")
-		return repositories.CreateServiceResponseDto{}, r.BadRequest("Existing pending service found.")
+		s.log.Println("Ya exoste una solicitud de servicio pendiente entre el cliente y el profesional.")
+		return repositories.CreateServiceResponseDto{}, r.BadRequest("Ya exoste una solicitud de servicio pendiente entre el cliente y el profesional.")
 	}
 	response, err := s.repo.CreateService(ctx, req)
 	if err != nil {

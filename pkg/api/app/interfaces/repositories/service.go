@@ -26,10 +26,29 @@ type CreateServiceResponseDto struct {
 	ClientLongitude string `json:"last_client_lng"`
 }
 
+type ServiceListRequestDTO struct {
+	UserID string `json:"user_id"`
+	Page   int    `json:"page"`
+	Limit  int    `json:"limit"`
+}
+
+type ServiceListResponseDTO struct {
+	Data []ServiceDataResponseDto `json:"data"`
+}
+
+type ServiceDataResponseDto struct {
+	Status           string `json:"status"`
+	Description      string `json:"description"`
+	ProfessionalName string `json:"professional_name"`
+	CategoryName     string `json:"category_name"`
+}
+
 type ServiceRepository interface {
 	// Define the methods that the service repository should have
 	CreateService(ctx context.Context, dto CreateServiceRequestDTO) (CreateServiceResponseDto, error)
 	GetClientById(ctx context.Context, clientID string) (*domain.Users, error)
 
 	ValidateExistingPendingServiceFromClientToProfessional(ctx context.Context, clientID string, professionalID string) (bool, error)
+	CountServicesByUserId(ctx context.Context, userID string) (int, error)
+	GetServicesByUserId(ctx context.Context, userID string, offset int, limit int) ([]ServiceDataResponseDto, error)
 }
