@@ -57,10 +57,6 @@ func decodeListServiceByUserIdRequest(ctx context.Context, r *http.Request) (int
 	limit := r.URL.Query().Get("limit")
 	offset := r.URL.Query().Get("offset")
 
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		return nil, response.BadRequest(err.Error())
-	}
-
 	req.UserID = params.ByName("id")
 
 	if limit != "" {

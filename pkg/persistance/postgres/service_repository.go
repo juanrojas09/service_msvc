@@ -134,6 +134,9 @@ func (s *ServiceRepositoryImp) GetServicesByUserId(ctx context.Context, userID s
 			Description:      service.Description,
 			ProfessionalName: service.Professional.Name + " " + service.Professional.LastName,
 			CategoryName:     service.Category.Name,
+			ID:               service.ID,
+			DateOfCreation:   service.CreatedAt.Format("2006-01-02 15:04:05"),
+			Price:            service.AgreedPrice,
 		}
 		results = append(results, mappedResult)
 	}

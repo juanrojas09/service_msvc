@@ -37,10 +37,13 @@ type ServiceListResponseDTO struct {
 }
 
 type ServiceDataResponseDto struct {
-	Status           string `json:"status"`
-	Description      string `json:"description"`
-	ProfessionalName string `json:"professional_name"`
-	CategoryName     string `json:"category_name"`
+	ID               string  `json:"id"`
+	Status           string  `json:"status"`
+	Description      string  `json:"description"`
+	ProfessionalName string  `json:"professional_name"`
+	CategoryName     string  `json:"category_name"`
+	DateOfCreation   string  `json:"created_at"`
+	Price            float64 `json:"price"`
 }
 
 type ServiceRepository interface {
