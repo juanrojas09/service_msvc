@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"strconv"
 
@@ -157,4 +158,22 @@ func (s *ServiceRepositoryImp) GetServiceDetailById(ctx context.Context, service
 
 	return &result, nil
 
+}
+
+func (s *ServiceRepositoryImp) SaveServiceEvidence(ctx context.Context, dto repositories.SaveServiceEvidenceRequestDto) error {
+
+	tx := s.db.WithContext(ctx).Model(&domain.ServiceEvidence{})
+	data, err := json.Marshal(dto.StrokesData)
+	if err != nil {
+		s.log.Printf("Error marshalling strokes data: %v", err)
+		return err
+	}
+	evidence := &domain.ServiceEvidence{
+		ID:          uuid.NewString(),
+		ServiceId:   dto.ServiceID,
+		SignedByID:  dto.ClientID,
+		JsonPayload: data,
+	}
+	tx.Create(evidence)
+	return tx.Error
 }

@@ -29,12 +29,14 @@ func main() {
 	createServiceUC := usecases.NewServiceRequestImpl(serviceRepository, logger)
 	listServicesUC := usecases.NewServiceListByUserIdImpl(serviceRepository, logger)
 	GetServiceDetailByIdUC := usecases.NewServiceDetailByIdImpl(serviceRepository, logger)
+	SaveServiceEvidenceUC := usecases.NewSaveServiceEvidenceImpl(serviceRepository, logger)
 	jwtService := common.NewJWTService()
 
 	registry := &controllers.UseCaseRegistry{
 		CreateServiceRequestUseCase: createServiceUC,
 		ListServiceByUserIdUseCase:  listServicesUC,
 		GetServiceDetailByIdUseCase: GetServiceDetailByIdUC,
+		SaveServiceEvidenceUseCase:  SaveServiceEvidenceUC,
 	}
 	endpoints := controllers.MakeEndpoints(registry)
 

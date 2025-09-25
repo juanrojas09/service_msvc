@@ -103,8 +103,10 @@ func (s *ServiceDetailByIdImpl) Handle(ctx context.Context, params ...interface{
 	}
 
 	//Mapear evidencias
-	if err := json.Unmarshal(result.ServiceEvidence.JsonPayload, &mappedResult.ServiceEvidence); err != nil {
-		return nil, response.InternalServerError(err.Error())
+	if result.ServiceEvidence.ID != "" {
+		if err := json.Unmarshal(result.ServiceEvidence.JsonPayload, &mappedResult.ServiceEvidence); err != nil {
+			return nil, response.InternalServerError(err.Error())
+		}
 	}
 
 	return response.Ok("Service details fetched successfully", mappedResult, nil), nil

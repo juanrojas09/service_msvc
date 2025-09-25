@@ -26,9 +26,13 @@ func NewHttpServer(ctx context.Context, endpoints controllers.Endpoints) http.Ha
 	GetServiceDetailByIdHandler := gin.WrapH(kithttp.NewServer(endpoint.Endpoint(endpoints.GetServiceDetailByIdRequest),
 		decodeServiceDetailByIdRequest, encodeResponse))
 
+	SaveServiceEvidenceHandler := gin.WrapH(kithttp.NewServer(endpoint.Endpoint(endpoints.SaveServiceEvidence),
+		decodeSaveEvidenceHandler, encodeResponse)) // Placeholder for SaveServiceEvidence
+
 	r.POST("/service", encodeGin, CreateServiceRequestHandler)
 	r.GET("/service/:id", encodeGin, ListServiceRequestHandler)
 	r.GET("/service/detail/:id", encodeGin, GetServiceDetailByIdHandler)
+	r.POST("/service/evidence", encodeGin, SaveServiceEvidenceHandler) // Placeholder for SaveServiceEvidence
 	return r
 }
 
@@ -81,5 +85,14 @@ func decodeServiceDetailByIdRequest(ctx context.Context, r *http.Request) (inter
 
 	req.ID = params.ByName("id")
 
+	return req, nil
+}
+
+func decodeSaveEvidenceHandler(ctx context.Context, r *http.Request) (interface{}, error) {
+	req := repositories.SaveServiceEvidenceRequestDto{}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return nil, response.BadRequest(err.Error())
+	}
 	return req, nil
 }

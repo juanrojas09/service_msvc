@@ -96,6 +96,12 @@ type Point struct {
 	T int     `json:"t"`
 }
 
+type SaveServiceEvidenceRequestDto struct {
+	ServiceID   string       `json:"service_id"`
+	ClientID    string       `json:"client_id"`
+	StrokesData EvidenceJSON `json:"strokes_data"`
+}
+
 type ServiceRepository interface {
 	// Define the methods that the service repository should have
 	CreateService(ctx context.Context, dto CreateServiceRequestDTO) (CreateServiceResponseDto, error)
@@ -105,4 +111,6 @@ type ServiceRepository interface {
 	CountServicesByUserId(ctx context.Context, userID string) (int, error)
 	GetServicesByUserId(ctx context.Context, userID string, offset int, limit int) ([]ServiceDataResponseDto, error)
 	GetServiceDetailById(ctx context.Context, serviceID string) (*domain.ServicesRequests, error)
+
+	SaveServiceEvidence(ctx context.Context, dto SaveServiceEvidenceRequestDto) error
 }
