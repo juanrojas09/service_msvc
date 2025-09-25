@@ -142,3 +142,19 @@ func (s *ServiceRepositoryImp) GetServicesByUserId(ctx context.Context, userID s
 	}
 	return results, nil
 }
+
+func (s *ServiceRepositoryImp) GetServiceDetailById(ctx context.Context, serviceID string) (*domain.ServicesRequests, error) {
+	var result domain.ServicesRequests
+
+	tx := s.db.WithContext(ctx).Model(&domain.ServicesRequests{})
+
+	tx = tx.Preload("Professional").Preload("Client").Preload("Status").Preload("Category").Preload("ServiceEvidence").Preload("Payments")
+	tx = tx.Where("id=?", serviceID).First(&result)
+	if tx.Error != nil {
+		s.log.Printf("Error getting service detail by ID: %v", tx.Error)
+		return nil, tx.Error
+	}
+
+	return &result, nil
+
+}

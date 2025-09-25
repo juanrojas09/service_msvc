@@ -1,0 +1,4 @@
+$env:GOPRIVATE = "github.com/juanrojas09/*"
+$env:GOAUTH = "basic"
+ $env:GIT_ASKPASS = "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"
+ git config --global url."https://juanrojas09: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@github.com/".insteadOf "https://github.com/"

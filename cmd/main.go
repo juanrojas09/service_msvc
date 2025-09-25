@@ -28,11 +28,13 @@ func main() {
 	serviceRepository := postgres.NewServiceRepository(db, logger)
 	createServiceUC := usecases.NewServiceRequestImpl(serviceRepository, logger)
 	listServicesUC := usecases.NewServiceListByUserIdImpl(serviceRepository, logger)
+	GetServiceDetailByIdUC := usecases.NewServiceDetailByIdImpl(serviceRepository, logger)
 	jwtService := common.NewJWTService()
 
 	registry := &controllers.UseCaseRegistry{
 		CreateServiceRequestUseCase: createServiceUC,
 		ListServiceByUserIdUseCase:  listServicesUC,
+		GetServiceDetailByIdUseCase: GetServiceDetailByIdUC,
 	}
 	endpoints := controllers.MakeEndpoints(registry)
 
