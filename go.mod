@@ -41,7 +41,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/juanrojas09/core_domain v0.0.37 // indirect
+	github.com/juanrojas09/core_domain v0.0.39 // indirect
 	github.com/juanrojas09/go_lib_response v0.0.4 // indirect
 	github.com/juanrojas09/gocourse_meta v0.0.1 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect

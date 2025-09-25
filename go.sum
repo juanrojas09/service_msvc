@@ -76,6 +76,10 @@ github.com/juanrojas09/core_domain v0.0.36 h1:6v/0Y/saoQMXNh+QEvO+JV6yTeJhXHx+um
 github.com/juanrojas09/core_domain v0.0.36/go.mod h1:VSWBeJYkbskx5JZdVt/0LyR1SUjAGFq8NmRJbEZGdU0=
 github.com/juanrojas09/core_domain v0.0.37 h1:YKDTzyaCXG/mBQKuMlUlnFbYsNGg02OpM7WV0+x2UTY=
 github.com/juanrojas09/core_domain v0.0.37/go.mod h1:VSWBeJYkbskx5JZdVt/0LyR1SUjAGFq8NmRJbEZGdU0=
+github.com/juanrojas09/core_domain v0.0.38 h1:7y+jlG/B1CkTm/yFIdvQa+uas5GGDDnM3ModSBXJ2QQ=
+github.com/juanrojas09/core_domain v0.0.38/go.mod h1:VSWBeJYkbskx5JZdVt/0LyR1SUjAGFq8NmRJbEZGdU0=
+github.com/juanrojas09/core_domain v0.0.39 h1:x3e0+WbR5HddgJcmAdfZYS9TJpKCe67gm3XXdSsbQnA=
+github.com/juanrojas09/core_domain v0.0.39/go.mod h1:VSWBeJYkbskx5JZdVt/0LyR1SUjAGFq8NmRJbEZGdU0=
 github.com/juanrojas09/core_rabbit_pub_sub_base v0.0.3 h1:OX9VcDBG0qVbT+uChcPcJ2IQGHaOcJGHVsdEwmodRUM=
 github.com/juanrojas09/core_rabbit_pub_sub_base v0.0.3/go.mod h1:8yDyyeV5IF6Qqsq088qExn++GNxxXtUJgs8u+6qcB/Y=
 github.com/juanrojas09/core_rabbit_pub_sub_base v0.0.4 h1:9AHWZnQjlSOy78yJjqODZv3Jrw44IVR7tvi+urJ0TFE=
