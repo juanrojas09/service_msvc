@@ -177,3 +177,31 @@ func (s *ServiceRepositoryImp) SaveServiceEvidence(ctx context.Context, dto repo
 	tx.Create(evidence)
 	return tx.Error
 }
+
+func (s *ServiceRepositoryImp) SaveServiceReview(ctx context.Context, dto repositories.SaveServiceReviewRequestDto) error {
+	var service domain.ServicesRequests
+	res := s.db.WithContext(ctx).Model(&domain.ServicesRequests{}).
+		Where("id = ? AND client_id = ?", dto.ServiceId, dto.ClientId).First(&service)
+
+	if res.Error != nil {
+		s.log.Printf("Error getting service by ID and client ID: %v", res.Error)
+		return res.Error
+	}
+
+	review := s.db.WithContext(ctx).Model(&domain.ServiceReviews{}).
+		Create(&domain.ServiceReviews{
+			ID:                uuid.NewString(),
+			ServiceRequestsId: dto.ServiceId,
+			ReviewerId:        dto.ClientId,
+			RevieweedId:       service.ProfessionalID,
+			Rating:            dto.Rating,
+			Comment:           dto.Comment,
+		})
+
+	if review.Error != nil {
+		s.log.Printf("Error saving service review: %v", review.Error)
+		return review.Error
+	}
+	return nil
+
+}

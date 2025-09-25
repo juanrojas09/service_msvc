@@ -14,6 +14,7 @@ type (
 		GetServiceListByUserIdRequest Controller
 		GetServiceDetailByIdRequest   Controller
 		SaveServiceEvidence           Controller
+		SaveServiceReviews            Controller
 	}
 
 	UseCaseRegistry struct {
@@ -21,6 +22,7 @@ type (
 		ListServiceByUserIdUseCase  interfaces.UseCases
 		GetServiceDetailByIdUseCase interfaces.UseCases
 		SaveServiceEvidenceUseCase  interfaces.UseCases
+		SaveServiceReviewsUseCase   interfaces.UseCases
 	}
 )
 
@@ -30,6 +32,7 @@ func MakeEndpoints(ucr *UseCaseRegistry) Endpoints {
 		GetServiceListByUserIdRequest: makeGetServiceListByUserIdEndpoint(ucr.ListServiceByUserIdUseCase),
 		GetServiceDetailByIdRequest:   makeGetServiceDetailByIdEndpoint(ucr.GetServiceDetailByIdUseCase),
 		SaveServiceEvidence:           makeSaveServiceEvidenceEndpoint(ucr.SaveServiceEvidenceUseCase),
+		SaveServiceReviews:            makeSaveServiceReviewsEndpoint(ucr.SaveServiceReviewsUseCase),
 	}
 }
 
@@ -52,6 +55,12 @@ func makeGetServiceDetailByIdEndpoint(uc interfaces.UseCases) Controller {
 }
 
 func makeSaveServiceEvidenceEndpoint(uc interfaces.UseCases) Controller {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		return uc.Handle(ctx, req)
+	}
+}
+
+func makeSaveServiceReviewsEndpoint(uc interfaces.UseCases) Controller {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		return uc.Handle(ctx, req)
 	}

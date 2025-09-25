@@ -102,6 +102,13 @@ type SaveServiceEvidenceRequestDto struct {
 	StrokesData EvidenceJSON `json:"strokes_data"`
 }
 
+type SaveServiceReviewRequestDto struct {
+	ServiceId string `json:"service_id"`
+	ClientId  string `json:"client_id"`
+	Rating    int    `json:"rating"`
+	Comment   string `json:"comment"`
+}
+
 type ServiceRepository interface {
 	// Define the methods that the service repository should have
 	CreateService(ctx context.Context, dto CreateServiceRequestDTO) (CreateServiceResponseDto, error)
@@ -113,4 +120,5 @@ type ServiceRepository interface {
 	GetServiceDetailById(ctx context.Context, serviceID string) (*domain.ServicesRequests, error)
 
 	SaveServiceEvidence(ctx context.Context, dto SaveServiceEvidenceRequestDto) error
+	SaveServiceReview(ctx context.Context, dto SaveServiceReviewRequestDto) error
 }
