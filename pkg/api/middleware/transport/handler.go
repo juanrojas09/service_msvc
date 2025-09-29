@@ -29,13 +29,17 @@ func NewHttpServer(ctx context.Context, endpoints controllers.Endpoints) http.Ha
 	SaveServiceEvidenceHandler := gin.WrapH(kithttp.NewServer(endpoint.Endpoint(endpoints.SaveServiceEvidence),
 		decodeSaveEvidenceHandler, encodeResponse))
 
+	GetProfessionalServiceListByIdHandler := gin.WrapH(kithttp.NewServer(endpoint.Endpoint(endpoints.GetProfessionalServiceList),
+		decodeProfessionalServiceListByIdRequest, encodeResponse))
+
 	SaveServiceReviewsHandler := gin.WrapH(kithttp.NewServer(endpoint.Endpoint(endpoints.SaveServiceReviews),
 		decodeSaveReviewsHandler, encodeResponse))
 	r.POST("/service", encodeGin, CreateServiceRequestHandler)
 	r.GET("/service/:id", encodeGin, ListServiceRequestHandler)
 	r.GET("/service/detail/:id", encodeGin, GetServiceDetailByIdHandler)
 	r.POST("/service/evidence", encodeGin, SaveServiceEvidenceHandler) // Placeholder for SaveServiceEvidence
-	r.POST("/service/review", encodeGin, SaveServiceReviewsHandler)    // Placeholder for SaveServiceReviews
+	r.POST("/service/review", encodeGin, SaveServiceReviewsHandler)
+	r.GET("/service/professional/:id", encodeGin, GetProfessionalServiceListByIdHandler) // Placeholder for SaveServiceReviews
 	return r
 }
 
@@ -105,5 +109,24 @@ func decodeSaveReviewsHandler(ctx context.Context, r *http.Request) (interface{}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, response.BadRequest(err.Error())
 	}
+	return req, nil
+}
+
+func decodeProfessionalServiceListByIdRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	req := repositories.ProfessionalServiceListRequestDto{}
+
+	params := ctx.Value("params").(gin.Params)
+	limit := r.URL.Query().Get("limit")
+	offset := r.URL.Query().Get("offset")
+	req.ProfessionalID = params.ByName("id")
+
+	if limit != "" {
+		req.Limit, _ = strconv.Atoi(limit)
+	}
+
+	if offset != "" {
+		req.Page, _ = strconv.Atoi(offset)
+	}
+
 	return req, nil
 }

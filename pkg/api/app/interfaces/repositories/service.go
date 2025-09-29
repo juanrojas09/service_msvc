@@ -109,6 +109,23 @@ type SaveServiceReviewRequestDto struct {
 	Comment   string `json:"comment"`
 }
 
+type ProfessionalServiceListRequestDto struct {
+	ProfessionalID string `json:"professional_id"`
+	Page           int    `json:"page"`
+	Limit          int    `json:"limit"`
+}
+type ProfessionalServiceListResponseDto struct {
+	ID               string  `json:"id"`
+	Status           string  `json:"status"`
+	ClientName       string  `json:"clientName"`
+	Date             string  `json:"date"`
+	Description      string  `json:"description"`
+	AgreePriceAmount float64 `json:"agreePriceAmount"`
+	AcreePriceDate   string  `json:"agreePriceDate"`
+	ClientLatitude   string  `json:"clientLat"`
+	ClientLongitude  string  `json:"clientLng"`
+}
+
 type ServiceRepository interface {
 	// Define the methods that the service repository should have
 	CreateService(ctx context.Context, dto CreateServiceRequestDTO) (CreateServiceResponseDto, error)
@@ -121,4 +138,7 @@ type ServiceRepository interface {
 
 	SaveServiceEvidence(ctx context.Context, dto SaveServiceEvidenceRequestDto) error
 	SaveServiceReview(ctx context.Context, dto SaveServiceReviewRequestDto) error
+
+	GetProfessionalServicesById(ctx context.Context, professionalID string, offset int, limit int) ([]ProfessionalServiceListResponseDto, error)
+	GetProfessionalServicesCount(ctx context.Context, professionalID string) (int, error)
 }

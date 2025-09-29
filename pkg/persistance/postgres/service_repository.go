@@ -205,3 +205,44 @@ func (s *ServiceRepositoryImp) SaveServiceReview(ctx context.Context, dto reposi
 	return nil
 
 }
+
+func (s *ServiceRepositoryImp) GetProfessionalServicesCount(ctx context.Context, professionalID string) (int, error) {
+	var count int64
+	res := s.db.WithContext(ctx).Model(&domain.ServicesRequests{}).Where("professional_id=?", professionalID).Count(&count)
+	if res.Error != nil {
+		return 0, res.Error
+	}
+	return int(count), nil
+}
+
+func (s *ServiceRepositoryImp) GetProfessionalServicesById(ctx context.Context, professionalID string, offset int, limit int) ([]repositories.ProfessionalServiceListResponseDto, error) {
+	var results []repositories.ProfessionalServiceListResponseDto
+	var services []domain.ServicesRequests
+
+	tx := s.db.WithContext(ctx).Model(&services).Where("professional_id = ?", professionalID).Offset(offset).Limit(limit).Preload("Client").Preload("Status")
+
+	if err := tx.Find(&services).Error; err != nil {
+		s.log.Printf("Error getting professional services by ID: %v", err)
+		return nil, err
+	}
+
+	for _, service := range services {
+
+		mappedResult := repositories.ProfessionalServiceListResponseDto{
+			ID:               service.ID,
+			Status:           string(service.Status.Name),
+			ClientName:       service.Client.Name + " " + service.Client.LastName,
+			Date:             service.CreatedAt.Format("2006-01-02 15:04:05"),
+			Description:      service.Description,
+			AgreePriceAmount: service.AgreedPrice,
+
+			ClientLatitude:  strconv.FormatFloat(*service.LastClientLat, 'f', 6, 64),
+			ClientLongitude: strconv.FormatFloat(*service.LastClientLng, 'f', 6, 64),
+		}
+		if service.AgreedPriceAt != nil {
+			mappedResult.AcreePriceDate = service.AgreedPriceAt.Format("2006-01-02 15:04:05")
+		}
+		results = append(results, mappedResult)
+	}
+	return results, nil
+}
